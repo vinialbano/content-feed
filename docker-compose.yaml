@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  next-app:
+    container_name: content-feed-next
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Set environment variables directly in the docker-compose file
+    environment:
+      CONTENT_API_URL: ${CONTENT_API_URL}
+      NUMBER_OF_POSTS_IN_BATCH: ${NUMBER_OF_POSTS_IN_BATCH}
+
+    # Set environment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - my_network
+
+  # Add more containers below (nginx, postgres, etc.)
+  redis:
+    container_name: content-feed-redis
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - my_network
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  my_network:

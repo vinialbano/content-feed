@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Content Feed Application
+
+## Overview
+
+This full-stack application retrieves, processes, and displays data as a content feed, using Next.js for the frontend and Redis for backend data management. It showcases API integration, data processing, dynamic content display with infinite scrolling, and efficient data fetching using Next.js Server Actions.
+
+## Technologies
+
+- Next.js: Utilized for the frontend and Server Actions, Next.js handles server-side operations seamlessly, integrating well with React-based libraries for dynamic content rendering.
+- Redis: Employs an in-memory data structure store to enable fast caching and efficient data retrieval, optimizing response times and system performance.
+- Axios: Manages HTTP requests efficiently, simplifying the process of integrating with external APIs by offering a promise-based API.
+- Docker: Provides a consistent and isolated environment for development by containerizing the application and its dependencies.
+- Jest and Testing Library: Used for running tests, these tools help verify the functionality of both React components and server-side logic, ensuring that the application behaves as expected under various conditions.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Docker and Docker Compose
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Setup and Run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  Clone the repository:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+    ```bash
+    git clone https://github.com/vinialbano/content-feed.git
+    ```
 
-## Learn More
+2.  Create a .env file in the root directory with the following content:
 
-To learn more about Next.js, take a look at the following resources:
+    ```plaintext
+    CONTENT_API_URL=https://stoplight.io/mocks/engine/fullstack-spec/52502230/content
+    NUMBER_OF_POSTS_IN_BATCH=10
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  Run the application using Docker:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    ```bash
+    docker-compose up
+    ```
 
-## Deploy on Vercel
+The application will be available at `http://localhost:3000`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- API Integration: Fetches data from a configurable external API.
+- Data Processing: Normalizes and sorts the data by priority.
+- Responsive UI: Implements infinite scrolling to dynamically load more posts as the user scrolls.
+- Performance: Leverages Redis for efficient data caching and batch loading to enhance user experience.
+
+## Challenges and Thought Process
+
+### Data Management: Caching and Scalability
+
+Objective: Enhance system performance and scalability through strategic data caching and batch processing.
+
+Challenges and Solutions:
+
+- Efficient Data Handling: Recognized inefficiencies in loading all data directly from the external API. Implemented batch processing to fetch posts only as needed, improving system responsiveness and reducing unnecessary network load.
+
+- Redis for Caching: Chose Redis to cache data fetched in batches. This setup minimizes latency, supports high-performance operations, and maintains a stateless architecture, ensuring system reliability even upon reloads.
+
+### Infinite Scrolling
+
+Objective: Enhance the user experience with seamless content browsing.
+
+Challenges and Solutions:
+
+- Continuous Data Delivery: Implemented infinite scrolling using Next.js Server Actions to dynamically load additional posts, minimizing initial load times and maintaining a fluid UI.
+
+- Performance Under Load: Optimized UI responsiveness by preemptively fetching data using Server Actions to ensure the Redis cache is replenished before depletion, providing uninterrupted content availability.
+
+### Experimentation and Alternative Approaches
+
+- Priority Queue with Bull: Explored using Bull for automated data sorting and prioritization.
+
+  - Limitation: Bull's continuous processing model conflicted with the requirement for discrete batch operations.
+
+- Redis Priority Queue: Tried using Redis's sorted sets for prioritization.
+
+  - Limitation: Inefficient in retrieving and trimming multiple items at once, crucial for effective batch loading.
