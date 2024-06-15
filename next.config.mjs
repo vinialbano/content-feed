@@ -5,7 +5,6 @@ const nextConfig = {
       {
         hostname: 'picsum.photos',
       },
-      { hostname: 'moneylion.com' },
     ],
   },
 };
